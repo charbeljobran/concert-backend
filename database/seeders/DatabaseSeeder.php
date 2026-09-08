@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->firstOrCreate(
+        User::firstOrCreate(
             ['email' => 'test@example.com'],
-            ['name' => 'Test User']
+            ['name' => 'Test User', 'password' => bcrypt(str()->random(32))]
         );
 
         $this->call(TableSeeder::class);
