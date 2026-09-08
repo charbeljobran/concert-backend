@@ -9,12 +9,11 @@ fi
 # Migrations are safe to re-run on every deploy/restart.
 php artisan migrate --force
 
-# Only seed the initial tables/prices once, so redeploys don't duplicate
-# or reset real reservation data.
-TABLE_COUNT=$(php artisan tinker --execute="echo \App\Models\Table::count();" 2>/dev/null | tail -n 1)
-if [ "$TABLE_COUNT" = "0" ]; then
-    php artisan db:seed --force
-fi
+# Every seeder uses updateOrCreate/firstOrCreate, so this is safe to run
+# on every boot — it won't duplicate rows or touch real reservation data,
+# and it will finish filling in any tables/prices left over from a
+# previous interrupted seed.
+php artisan db:seed --force
 
 # Render assigns the port to listen on via $PORT at runtime — it's not
 # known at build time, so it must be read here rather than hardcoded.
