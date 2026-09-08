@@ -1,10 +1,6 @@
 #!/bin/sh
 set -e
 
-# Make sure the sqlite database file exists (it's gitignored, so it won't
-# exist in a fresh container).
-touch database/database.sqlite
-
 # Generate an app key if one wasn't supplied via env vars.
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
@@ -20,4 +16,6 @@ if [ "$TABLE_COUNT" = "0" ]; then
     php artisan db:seed --force
 fi
 
-exec php artisan serve --host=0.0.0.0 --port=8080
+# Render assigns the port to listen on via $PORT at runtime — it's not
+# known at build time, so it must be read here rather than hardcoded.
+exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"
