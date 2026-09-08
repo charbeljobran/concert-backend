@@ -14,17 +14,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy Composer files and Laravel artisan
-COPY composer.json composer.lock artisan ./
+# Copy Laravel application
+COPY . .
 
 # Install PHP dependencies
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction
-
-# Copy the rest of the Laravel application
-COPY . .
 
 # Cache Laravel configuration
 RUN php artisan config:cache
